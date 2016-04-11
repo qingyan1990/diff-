@@ -1,0 +1,45 @@
+{
+  "type": "program",
+  "body": {
+    "type": "block",
+    "stmts": [
+      {
+        "type": "assign",
+        "target": {
+          "type": "name",
+          "id": "a",
+          "start": 0,
+          "end": 1,
+          "start_line": 1,
+          "end_line": 1
+        },
+        "value": {
+          "type": "float",
+          "value": "1.1",
+          "start": 4,
+          "end": 5,
+          "start_line": 1,
+          "end_line": 1
+        },
+        "fields": [
+          "target",
+          "value"
+        ],
+        "start": 0,
+        "end": 5,
+        "start_line": 1,
+        "end_line": 1
+      }
+    ],
+    "start": 0,
+    "end": 5,
+    "start_line": 1,
+    "end_line": 1
+  },
+  "filename": "test/test1.rb",
+  "start": 0,
+  "end": 5,
+  "start_line": 1,
+  "end_line": 1
+}
+
