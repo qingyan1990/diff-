@@ -191,7 +191,7 @@ def change_class(change):
 
 
 def span_start(change):
-    return '<span class=' + qs(change_class(change)) + '>'
+    return '<span class=' + qs(change_class(change)) + 'title=debug' + '>'
 
 
 def link_start(change, side):

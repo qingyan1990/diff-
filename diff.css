@@ -2,12 +2,14 @@
     border: solid 1px #CC929A;
     border-radius: 3px;
     background-color: #FCBFBA;
+    background: -webkit-linear-gradient(top,rgba(255, 255, 200, 0.35) 0,rgba(255, 255, 200, 0.55) 100%);
 }
 
 .i {                            /* inserted */
     border: solid 1px #73BE73;
     border-radius: 3px;
     background-color: #98FB98;
+    background: -webkit-linear-gradient(top,rgba(255, 255, 200, 0.35) 0,rgba(255, 255, 200, 0.55) 100%);
 }
 
 .c {                            /* changed */
@@ -15,6 +17,7 @@
     background-color: LightBlue;
     border-radius: 3px;
     cursor: pointer;
+    background: -webkit-linear-gradient(top,rgba(255, 255, 200, 0.35) 0,rgba(255, 255, 200, 0.55) 100%);
 }
 
 .m {                            /* moved */

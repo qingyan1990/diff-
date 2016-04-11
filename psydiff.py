@@ -515,7 +515,10 @@ def main():
         file2 = sys.argv[2]
         content1 = open(file1).read()
         content2 = open(file2).read()
-        changes = diff(file1, file2)
+        changes = diff(file1, file2, parent=True)
+        #for change in changes:
+            #if change.cost != 0:
+                #print change
         generate_html('tmp.html', Texts(content1, content2, changes))
 
 
