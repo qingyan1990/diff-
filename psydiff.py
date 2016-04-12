@@ -98,18 +98,10 @@ def str_dist(s1, s2):
 # the main dynamic programming part
 # similar to the structure of diff_list
 def dist1(table, s1, s2):
-    def memo(v):
-        table_put(table, len(s1), len(s2), v)
-        return v
-
-    cached = table_lookup(table, len(s1), len(s2))
-    if cached is not None:
-        return cached
-
     if s1 == s2:
-        return memo(1.0)
+        return 1.0
     if s1 == '' or s2 == '':
-        return memo(0)
+        return 0
 
     s = set()
     for i in range(len(s1)-1):
@@ -118,7 +110,7 @@ def dist1(table, s1, s2):
     for j in range(len(s2)-1):
         if s2[j:j+2] in s:
             count += 1
-    return memo(div(2*count, len(s1)+len(s2)-2))
+    return div(2*count, len(s1)+len(s2)-2)
 
 
 
