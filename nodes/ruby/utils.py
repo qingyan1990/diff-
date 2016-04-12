@@ -2,12 +2,9 @@
 #            tests and operations on AST nodes
 #-------------------------------------------------------------
 import os
-import cProfile
 from node import *
-
 from ast import *
 from parameters import *
-
 
 # get list of fields from a node
 def node_fields(node):
@@ -135,12 +132,6 @@ def serialize_if(node):
         return [node]
 
 
-def delete_docstring(node):
-    if len(node) > 0:
-        if isinstance(node[0], Expr):
-            node.pop(0)
-
-
 def node_name(node):
     if isinstance(node, Name):
         return node.id
@@ -184,9 +175,6 @@ def node_size(node, test=False):
     elif isinstance(node, Str):
         ret = 1
 
-    elif isinstance(node, Expr):
-        ret = node_size(node.value, test)
-
     elif isinstance(node, Node):
         ret = 1 + sum(map(lambda x: node_size(x, test), node_fields(node)))
 
@@ -196,7 +184,7 @@ def node_size(node, test=False):
     if test:
         print("node:", node, "size=", ret)
 
-    if isinstance(node, AST):
+    if isinstance(node, Node):
         node.node_size = ret
 
     return ret

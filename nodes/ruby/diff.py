@@ -143,10 +143,6 @@ def diff_node(node1, node2, depth=0, move=False):
         node1 = [node1]
 
     if isinstance(node1, list) and isinstance(node2, list):
-        node1 = serialize_if(node1)
-        node2 = serialize_if(node2)
-        delete_docstring(node1)
-        delete_docstring(node2)
         table = create_table(len(node1), len(node2))
         return diff_list(table, node1, node2, 0, move)
 
