@@ -107,6 +107,28 @@ class Parser:
             body = self.convert(h.get("body"))
             return While(test, body, None, start, end)
 
+        if t == "class":
+            name = self.convert(h.get("name"))
+            base = self.convert(h.get("super"))
+            body = self.convert(h.get("body"))
+            docstring = self.convert(h.get("doc"))
+            isStatic = h.get("static")
+            return Class(name, base, body, docstring, isStatic, start, end)
+
+        if t == "def":
+            name = self.convert(h.get("name"))
+            body = self.convert(h.get("body"))
+            argsMap = h.get("params")
+            positional = self.convertList(argsMap.get("positional"))
+            defaults = self.convertList(argsMap.get("defaults"))
+            var = self.convert(argsMap.get("rest"))
+            vararg = var if var else None
+            kw = self.convert(argsMap.get("rest_kw"))
+            kwarg = kw if kw else None
+            afterRest = self.convertList(argsMap.get("after_rest"))
+            blockarg = self.convert(argsMap.get("blockarg"))
+            docstring = self.convert(h.get("doc"))
+            return Function(name, positional, body, defaults, vararg, kwarg, afterRest, blockarg, docstring, start, end)
 
 
 

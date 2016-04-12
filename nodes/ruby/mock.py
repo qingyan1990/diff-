@@ -7,6 +7,7 @@ from subprocess import PIPE,Popen
 s1 =  Popen("ruby ast.rb /home/aiyanxu/study/diff++/test/test1.rb", shell=True, stdout=PIPE).stdout.read()
 #s2 =  Popen("ruby ast.rb /home/aiyanxu/study/diff++/test/test2.rb", shell=True, stdout=PIPE).stdout.read()
 h1 = loads(s1)
+print h1
 #h2 = loads(s2)
 #content1 = open('/home/aiyanxu/study/diff++/test/test1.rb').read()
 #content2 = open('/home/aiyanxu/study/diff++/test/test2.rb').read()

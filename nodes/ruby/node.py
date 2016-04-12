@@ -142,9 +142,32 @@ class While(Node):
         self.orelse = orelse
         self.addChildren(test, body, orelse)
 
+class Class(Node):
+    def __init__(self, name, base, body, docstring, isStatic, node_start, node_end):
+        Node.__init__(self, node_start, node_end)
+        self.name = name
+        self.base = base
+        self.body = body
+        self.docstring = docstring
+        self.isStatic = isStatic
+        self.addChildren(name, base, body, docstring)
 
-
-
+class Function(Node):
+    def __init__(self, name, args, body, defaults, vararg, kwarg, afterRest, blockarg, docstring, node_start, node_end):
+        Node.__init__(self, node_start, node_end)
+        self.name = name
+        self.args = args
+        self.body = body
+        self.defaults = defaults
+        self.vararg = vararg
+        self.kwarg = kwarg
+        self.afterRest = afterRest
+        self.blockarg = blockarg
+        self.docstring = docstring
+        self.addChildren(args)
+        self.addChildren(defaults)
+        self.addChildren(afterRest)
+        self.addChildren(name, body, vararg, kwarg, blockarg)
 
 
 
