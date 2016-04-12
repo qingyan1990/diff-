@@ -21,11 +21,13 @@ class Assign(Node):
         self.value = value
         self.addChildren(target)
         self.addChildren(value)
+        self._fields = ["target", "value"]
 
 class Name(Node):
     def __init__(self, name, start, end):
         Node.__init__(self, start, end)
         self.name = name
+        self._fields = ["name"]
 
 
 class RbFloat(Node):
@@ -37,6 +39,7 @@ class RbInt(Node):
     def __init__(self, value, start, end):
         Node.__init__(self, start, end)
         self.value = int(value)
+        self._fields = ["value"]
 
 class Op(Node):
     def __init__(self, name, start, end):
