@@ -88,7 +88,8 @@ def str_dist(s1, s2):
 
     table = create_table(len(s1), len(s2))
     d = dist1(table, s1, s2)
-    ret = div(2*d, len(s1) + len(s2))
+    #ret = div(2*d, len(s1) + len(s2))
+    ret = (1.0-d)*2
 
     str_dist_cache[(s1, s2)]=ret
     return ret
@@ -105,23 +106,19 @@ def dist1(table, s1, s2):
     if cached is not None:
         return cached
 
-    if s1 == '':
-        return memo(len(s2))
-    elif s2 == '':
-        return memo(len(s1))
-    else:
-        if s1[0] == s2[0]:
-            d0 = 0
-        elif s1[0].lower() == s2[0].lower():
-            d0 = 1
-        else:
-            d0 = 2
+    if s1 == s2:
+        return memo(1.0)
+    if s1 == '' or s2 == '':
+        return memo(0)
 
-        d0 = d0 + dist1(table, s1[1:], s2[1:])
-        d1 = 1 + dist1(table, s1[1:], s2)
-        d2 = 1 + dist1(table, s1, s2[1:])
-        return memo(min(d0, d1, d2))
-
+    s = set()
+    for i in range(len(s1)-1):
+        s.add(s1[i:i+2])
+    count = 0
+    for j in range(len(s2)-1):
+        if s2[j:j+2] in s:
+            count += 1
+    return memo(div(2*count, len(s1)+len(s2)-2))
 
 
 
