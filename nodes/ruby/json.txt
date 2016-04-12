@@ -4,12 +4,12 @@
     "type": "block",
     "stmts": [
       {
-        "type": "module",
-        "name": {
+        "type": "while",
+        "test": {
           "type": "name",
-          "id": "A",
-          "start": 7,
-          "end": 8,
+          "id": "true",
+          "start": 6,
+          "end": 10,
           "start_line": 1,
           "end_line": 1
         },
@@ -17,30 +17,38 @@
           "type": "block",
           "stmts": [
             {
-              "type": "void"
+              "type": "int",
+              "value": "1",
+              "start": 13,
+              "end": 14,
+              "start_line": 2,
+              "end_line": 2
             }
-          ]
+          ],
+          "start": 13,
+          "end": 14,
+          "start_line": 2,
+          "end_line": 2
         },
-        "filename": "test/test1.rb",
+        "mod": false,
         "fields": [
-          "name",
+          "test",
           "body"
         ],
-        "start": 7,
-        "end": 12,
+        "start": 6,
+        "end": 18,
         "start_line": 1,
-        "end_line": 1
+        "end_line": 2
       }
     ],
-    "start": 7,
-    "end": 12,
+    "start": 6,
+    "end": 18,
     "start_line": 1,
-    "end_line": 1
+    "end_line": 2
   },
   "filename": "test/test1.rb",
-  "start": 7,
-  "end": 12,
+  "start": 6,
+  "end": 18,
   "start_line": 1,
-  "end_line": 1
+  "end_line": 2
 }
-

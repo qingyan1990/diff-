@@ -55,6 +55,61 @@ class Parser:
         if t == "void":
             return Void(start, end)
 
+        if t == "for":
+            target = self.convert(h.get("target"))
+            iterator = self.convert(h.get("iter"))
+            body = self.convert(h.get("body"))
+            return For(target, iterator, body, None,start, end)
+
+        if t == "call":
+            func = self.convert(h.get("func"))
+            args = h.get("args")
+            blockarg = None
+            stararg = None
+
+            if args:
+                pass
+            else:
+                return Call(func, None, None, None, stararg, blockarg, start, end)
+
+
+        if t == "return":
+            value = self.convert(h.get("value"))
+            return Return(value, start, end)
+
+        if t == "array":
+            elts = self.convertList(h.get("elts"))
+            if elts is None:
+                elts = []
+            return Array(elts, start, end)
+
+        if t == "if":
+            test = self.convert(h.get("test"))
+            body = self.convert(h.get("body"))
+            orelse = self.convert(h.get("else"))
+            return If(test, body, orelse, start, end)
+
+        if t == "symbol":
+            value = h.get("id")
+            return Symbol(value, start, end)
+
+        if t == "hash":
+            entries = self.convertList(h.get("entries"))
+            return Dict(entries, start, end)
+
+        if t == "assoc":
+            key = self.convert(h.get("key"))
+            value = self.convert(h.get("value"))
+            return Assoc(key, value, start, end)
+
+        if t == "while":
+            test = self.convert(h.get("test"))
+            body = self.convert(h.get("body"))
+            return While(test, body, None, start, end)
+
+
+
+
         print "error occus,type is ", t
 
     def convertList(self, array):
