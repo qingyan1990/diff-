@@ -191,7 +191,7 @@ def change_class(change):
 
 
 def span_start(change):
-    return '<span class=' + qs(change_class(change)) + 'title=debug' + '>'
+    return '<span class=' + qs(change_class(change)) + ' title=' + qs(change_detail(change)) + '>'
 
 
 def link_start(change, side):
@@ -201,8 +201,13 @@ def link_start(change, side):
         me, other = change.orig, change.cur
     else:
         me, other = change.cur, change.orig
-
-    return ('<a id=' + qs(uid(me)) +
+    if cls == 'c':
+        return ('<a id=' + qs(uid(me)) +
+            ' tid=' + qs(uid(other)) +
+            ' class=' + qs(cls) + ' title=' + qs(change_detail(change)) +
+            '>')
+    else:
+        return ('<a id=' + qs(uid(me)) +
             ' tid=' + qs(uid(other)) +
             ' class=' + qs(cls) +
             '>')
@@ -217,6 +222,15 @@ def fix_width(s, number=5):
     spaces = " " * need_length
     return s+spaces
 
+def change_detail(change):
+    cla = change_class(change)
+    if cla == 'd':
+        return type(change.orig).__name__ + " statement delete"
+    if cla == 'i':
+        return type(change.cur).__name__ + " statement insert"
+    if cla == 'c':
+        return change.cur.subtype
+    return ''
 
 #def type_of_node(node):
     #if isinstance(node,Assign):
