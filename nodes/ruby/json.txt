@@ -4,41 +4,42 @@
     "type": "block",
     "stmts": [
       {
-        "type": "assign",
-        "target": {
+        "type": "module",
+        "name": {
           "type": "name",
-          "id": "a",
-          "start": 0,
-          "end": 1,
+          "id": "A",
+          "start": 7,
+          "end": 8,
           "start_line": 1,
           "end_line": 1
         },
-        "value": {
-          "type": "int",
-          "value": "1",
-          "start": 4,
-          "end": 5,
-          "start_line": 1,
-          "end_line": 1
+        "body": {
+          "type": "block",
+          "stmts": [
+            {
+              "type": "void"
+            }
+          ]
         },
+        "filename": "test/test1.rb",
         "fields": [
-          "target",
-          "value"
+          "name",
+          "body"
         ],
-        "start": 0,
-        "end": 5,
+        "start": 7,
+        "end": 12,
         "start_line": 1,
         "end_line": 1
       }
     ],
-    "start": 0,
-    "end": 5,
+    "start": 7,
+    "end": 12,
     "start_line": 1,
     "end_line": 1
   },
   "filename": "test/test1.rb",
-  "start": 0,
-  "end": 5,
+  "start": 7,
+  "end": 12,
   "start_line": 1,
   "end_line": 1
 }

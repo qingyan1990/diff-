@@ -32,6 +32,29 @@ class Parser:
             value = h.get("value")
             return RbInt(value, start, end)
 
+        if t == "binary":
+            left = self.convert(h.get("left"))
+            right = self.convert(h.get("right"))
+            op = self.convert(h.get("op"))
+            return BinOp(op, left, right, start, end)
+
+        if t == "op":
+            name = h.get("name")
+            return Op(name, start, end)
+
+        if t == "string":
+            value = h.get("id")
+            return Str(value, start, end)
+
+        if t == "module":
+            name = self.convert(h.get("name"))
+            body = self.convert(h.get("body"))
+            docstring = self.convert(h.get("doc"))
+            return Module(name, body, docstring, start, end)
+
+        if t == "void":
+            return Void(start, end)
+
         print "error occus,type is ", t
 
     def convertList(self, array):

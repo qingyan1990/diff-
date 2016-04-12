@@ -38,6 +38,36 @@ class RbInt(Node):
         Node.__init__(self, start, end)
         self.value = int(value)
 
+class Op(Node):
+    def __init__(self, name, start, end):
+        Node.__init__(self, start, end)
+        self.name = name
+
+class BinOp(Node):
+    def __init__(self, op, left, right, start, end):
+        Node.__init__(self, start, end)
+        self.op = op
+        self.right = right
+        self.left = left
+        self.addChildren(left, right)
+
+class Str(Node):
+    def __init__(self, value, start, end):
+        Node.__init__(self, start, end)
+        self.value = value
+
+class Module(Node):
+    def __init__(self, name, body, docstring, start, end):
+        Node.__init__(self, start, end)
+        self.name = name
+        self.body = body
+        self.docstring = docstring
+        self.addChildren(name, body)
+
+class Void(Node):
+    def __init__(self, start, end):
+        Node.__init__(self, start, end)
+
 
 
 
