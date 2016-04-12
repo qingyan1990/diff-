@@ -32,3 +32,24 @@ class RbFloat(Node):
     def __init__(self, value, start, end):
         Node.__init__(self, start, end)
         self.value = float(value)
+
+class RbInt(Node):
+    def __init__(self, value, start, end):
+        Node.__init__(self, start, end)
+        self.value = int(value)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

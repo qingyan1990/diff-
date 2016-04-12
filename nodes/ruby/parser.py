@@ -28,6 +28,10 @@ class Parser:
             value = h.get("value")
             return RbFloat(value, start, end)
 
+        if t == "int":
+            value = h.get("value")
+            return RbInt(value, start, end)
+
         print "error occus,type is ", t
 
     def convertList(self, array):
