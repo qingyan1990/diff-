@@ -87,7 +87,7 @@ def str_dist(s1, s2):
             return 0
 
     table = create_table(len(s1), len(s2))
-    d = dist1(table, s1, s2)
+    d = dist1(s1, s2)
     #ret = div(2*d, len(s1) + len(s2))
     ret = (1.0-d)*2
 
@@ -97,7 +97,7 @@ def str_dist(s1, s2):
 
 # the main dynamic programming part
 # similar to the structure of diff_list
-def dist1(table, s1, s2):
+def dist1(s1, s2):
     if s1 == s2:
         return 1.0
     if s1 == '' or s2 == '':
