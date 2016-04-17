@@ -226,9 +226,11 @@ def fix_width(s, number=5):
 def change_detail(change):
     cla = change_class(change)
     if cla == 'd':
-        return type(change.orig).__name__ + " statement delete"
+        if isinstance(change.orig, stmt):
+            return type(change.orig).__name__ + " statement delete"
     if cla == 'i':
-        return type(change.cur).__name__ + " statement insert"
+        if isinstance(change.cur, stmt):
+            return type(change.cur).__name__ + " statement insert"
     if cla == 'c':
         return change.cur.subtype
     return ''
