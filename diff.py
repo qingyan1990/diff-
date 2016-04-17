@@ -1,4 +1,4 @@
-from node import *
+from rubynode import *
 from utils import *
 from htmlize import htmlize
 

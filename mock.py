@@ -1,4 +1,4 @@
-from parser import Parser
+from rubyparser import Parser
 from json import loads
 from subprocess import PIPE,Popen
 import diff

@@ -2,7 +2,7 @@
 #            tests and operations on AST nodes
 #-------------------------------------------------------------
 import os
-from node import *
+from rubynode import *
 from parameters import *
 
 

@@ -1,4 +1,4 @@
-from node import *
+from rubynode import *
 class Parser:
     def convert(self, h):
         if (not isinstance(h, dict)) or len(h) == 0:
