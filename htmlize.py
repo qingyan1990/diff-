@@ -167,14 +167,15 @@ def change_tags(changes, side):
             start = node_start(key)
             end = node_end(key)
 
-            if c.orig != None and c.cur != None:
-                # <a ...> for change and move
-                tags.append(Tag(link_start(c, side), start))
-                tags.append(Tag("</a>", end, start))
-            else:
-                # <span ...> for deletion and insertion
-                tags.append(Tag(span_start(c), start))
-                tags.append(Tag('</span>', end, start))
+            if start and end:
+                if c.orig != None and c.cur != None:
+                    # <a ...> for change and move
+                    tags.append(Tag(link_start(c, side), start))
+                    tags.append(Tag("</a>", end, start))
+                else:
+                    # <span ...> for deletion and insertion
+                    tags.append(Tag(span_start(c), start))
+                    tags.append(Tag('</span>', end, start))
 
     return tags
 
