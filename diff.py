@@ -1,5 +1,6 @@
-from improve_ast import *
-from htmlize import *
+from node import *
+from utils import *
+from htmlize import htmlize
 
 class Texts:
     def __init__(self, origin_text, current_text, changes):
@@ -88,7 +89,6 @@ def str_dist(s1, s2):
 
     table = create_table(len(s1), len(s2))
     d = dist1(s1, s2)
-    #ret = div(2*d, len(s1) + len(s2))
     ret = (1.0-d)*2
 
     str_dist_cache[(s1, s2)]=ret
@@ -134,6 +134,7 @@ def diff_node(node1, node2, depth=0, move=False):
             else:
                 return (changes, cost)
 
+    #pdb.set_trace()
     if isinstance(node1, list) and not isinstance(node2, list):
         node2 = [node2]
 
@@ -141,10 +142,6 @@ def diff_node(node1, node2, depth=0, move=False):
         node1 = [node1]
 
     if isinstance(node1, list) and isinstance(node2, list):
-        node1 = serialize_if(node1)
-        node2 = serialize_if(node2)
-        delete_docstring(node1)
-        delete_docstring(node2)
         table = create_table(len(node1), len(node2))
         return diff_list(table, node1, node2, 0, move)
 
@@ -162,27 +159,32 @@ def diff_node(node1, node2, depth=0, move=False):
         cost = str_dist(node1.s, node2.s)
         return ([mod_node(node1, node2, cost)], cost)
 
-    if (isinstance(node1, Name) and isinstance(node2, Name)):
+    if isinstance(node1, Name) and isinstance(node2, Name):
         cost = str_dist(node1.id, node2.id)
         return ([mod_node(node1, node2, cost)], cost)
 
-    if (isinstance(node1, Attribute) and isinstance(node2, Name) or
-        isinstance(node1, Name) and isinstance(node2, Attribute) or
-        isinstance(node1, Attribute) and isinstance(node2, Attribute)):
-        s1 = attr_to_str(node1)
-        s2 = attr_to_str(node2)
-        if s1 is not None and s2 is not None:
-            cost = str_dist(s1, s2)
-            return ([mod_node(node1, node2, cost)], cost)
+    if isinstance(node1, Op) and isinstance(node2, Op):
+        if node1.name == node2.name:
+            return ([mod_node(node1, node2, 0)], 0)
+        else:
+            return ([mod_node(node1, node2, 1)], 1)
+
+    #if (isinstance(node1, Attribute) and isinstance(node2, Name) or
+        #isinstance(node1, Name) and isinstance(node2, Attribute) or
+        #isinstance(node1, Attribute) and isinstance(node2, Attribute)):
+        #s1 = attr_to_str(node1)
+        #s2 = attr_to_str(node2)
+        #if s1 is not None and s2 is not None:
+            #cost = str_dist(s1, s2)
+            #return ([mod_node(node1, node2, cost)], cost)
         # else fall through for things like f(x).y vs x.y
 
-    if isinstance(node1, Module) and isinstance(node2, Module):
-        return diff_node(node1.body, node2.body, depth, move)
+    if isinstance(node1,Block) and isinstance(node2, Block):
+        return diff_node(node1.stmts, node2.stmts, depth, move)
 
     # same type of other AST nodes
     if (isinstance(node1, AST) and isinstance(node2, AST) and
         type(node1) == type(node2)):
-
         fs1 = node_fields(node1)
         fs2 = node_fields(node2)
         changes, cost = [], 0
@@ -423,63 +425,6 @@ def find_moves(res):
 #                     main diff command
 #-------------------------------------------------------------
 
-def diff(file1, file2, move=False, parent=False):
-
-    cleanup()
-
-    # get AST of file1
-    f1 = open(file1, 'r')
-    lines1 = f1.read()
-    f1.close()
-
-    try:
-        node1 = parse(lines1)
-    except (SyntaxError, Exception):
-        print('file %s cannot be parsed' % file1)
-        raise
-    improve_ast(node1, lines1, file1, 'left', parent)
-
-    # get AST of file2
-    f2 = open(file2, 'r');
-    lines2 = f2.read()
-    f2.close()
-
-    try:
-        node2 = parse(lines2)
-    except (SyntaxError, Exception):
-        print('file %s cannot be parsed' % file2)
-        raise
-
-    improve_ast(node2, lines2, file2, 'right', parent)
-
-    # get the changes
-    (changes, cost) = diff_node(node1, node2, 0, move)
-    return changes
-
-
-def diffstring(str1, str2, move=False, parent=False):
-
-    cleanup()
-
-    try:
-        node1 = parse(str1)
-    except (SyntaxError, Exception):
-        print('string -- %s -- cannot be parsed' % str1)
-        raise
-
-    improve_ast(node1, str1, None, 'left', parent)
-
-    try:
-        node2 = parse(str2)
-    except (SyntaxError, Exception):
-        print('string -- %s -- cannot be parsed' % str2)
-        raise
-
-    improve_ast(node2, str2, None, 'right', parent)
-
-    # get the changes
-    (changes, cost) = diff_node(node1, node2, 0, move)
-    return changes, cost
 
 
 def generate_html(filename, changes, has_lineno=False):
@@ -494,22 +439,3 @@ def cleanup():
     allNodes2 = set()
 
 
-
-# -------------------------------------------------------------
-#                      text-based interfaces
-# -------------------------------------------------------------
-def main():
-    if len(sys.argv) == 3:
-        file1 = sys.argv[1]
-        file2 = sys.argv[2]
-        content1 = open(file1).read()
-        content2 = open(file2).read()
-        changes = diff(file1, file2, parent=True)
-        #for change in changes:
-            #if change.cost != 0:
-                #print change
-        generate_html('tmp.html', Texts(content1, content2, changes))
-
-
-if __name__ == '__main__':
-    main()

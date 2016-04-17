@@ -3,9 +3,8 @@
 #-------------------------------------------------------------
 
 import os
-
+import pdb
 from parameters import *
-from ast import *
 from utils import *
 
 
@@ -161,13 +160,13 @@ def apply_tags(s, tags, has_lineno=False):
 
 def change_tags(changes, side):
     tags = []
+    #pdb.set_trace()
     for c in changes:
         key = c.orig if side == 'left' else c.cur
         if hasattr(key, 'lineno'):
             start = node_start(key)
             end = node_end(key)
-
-            if start and end:
+            if start or end:
                 if c.orig != None and c.cur != None:
                     # <a ...> for change and move
                     tags.append(Tag(link_start(c, side), start))
@@ -176,7 +175,6 @@ def change_tags(changes, side):
                     # <span ...> for deletion and insertion
                     tags.append(Tag(span_start(c), start))
                     tags.append(Tag('</span>', end, start))
-
     return tags
 
 
@@ -192,7 +190,7 @@ def change_class(change):
 
 
 def span_start(change):
-    return '<span class=' + qs(change_class(change)) + ' title=' + qs(change_detail(change)) + '>'
+    return '<span class=' + qs(change_class(change)) + 'title=debug' + '>'
 
 
 def link_start(change, side):
@@ -202,13 +200,8 @@ def link_start(change, side):
         me, other = change.orig, change.cur
     else:
         me, other = change.cur, change.orig
-    if cls == 'c':
-        return ('<a id=' + qs(uid(me)) +
-            ' tid=' + qs(uid(other)) +
-            ' class=' + qs(cls) + ' title=' + qs(change_detail(change)) +
-            '>')
-    else:
-        return ('<a id=' + qs(uid(me)) +
+
+    return ('<a id=' + qs(uid(me)) +
             ' tid=' + qs(uid(other)) +
             ' class=' + qs(cls) +
             '>')
@@ -223,17 +216,6 @@ def fix_width(s, number=5):
     spaces = " " * need_length
     return s+spaces
 
-def change_detail(change):
-    cla = change_class(change)
-    if cla == 'd':
-        if isinstance(change.orig, stmt):
-            return type(change.orig).__name__ + " statement delete"
-    if cla == 'i':
-        if isinstance(change.cur, stmt):
-            return type(change.cur).__name__ + " statement insert"
-    if cla == 'c':
-        return change.cur.subtype
-    return ''
 
 #def type_of_node(node):
     #if isinstance(node,Assign):

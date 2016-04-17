@@ -5,7 +5,7 @@
 DEBUG = False
 # sys.setrecursionlimit(10000)
 
-
+LANGUAGE = "Python"
 MOVE_RATIO     = 0.2
 MOVE_SIZE      = 10
 MOVE_ROUND     = 5

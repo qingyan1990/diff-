@@ -26,11 +26,11 @@ class Parser:
 
         if t == "float":
             value = h.get("value")
-            return RbFloat(value, start, end)
+            return Num(value, start, end)
 
         if t == "int":
             value = h.get("value")
-            return RbInt(value, start, end)
+            return Num(value, start, end)
 
         if t == "binary":
             left = self.convert(h.get("left"))

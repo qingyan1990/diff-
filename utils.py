@@ -2,9 +2,7 @@
 #            tests and operations on AST nodes
 #-------------------------------------------------------------
 import os
-import cProfile
-
-from ast import *
+from node import *
 from parameters import *
 
 
