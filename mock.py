@@ -14,4 +14,4 @@ node1 = Parser().convert(h1)
 node2 = Parser().convert(h2)
 changes, cost = diff.diff_node(node1, node2)
 print changes
-#diff.generate_html('tmp.html', diff.Texts(content1, content2,changes))
+diff.generate_html('tmp.html', diff.Texts(content1, content2,changes))
