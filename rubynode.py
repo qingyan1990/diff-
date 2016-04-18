@@ -101,7 +101,7 @@ class Return(AST):
         self.value = value
         self.addChildren(value)
 
-class Array(AST):
+class List(AST):
     def __init__(self, elts, node_start, node_end):
         AST.__init__(self, node_start, node_end)
         self.elts = elts
@@ -124,7 +124,7 @@ class Symbol(AST):
 class Dict(AST):
     def __init__(self, entries, node_start, node_end):
         AST.__init__(self, node_start, node_end)
-        self.entries = entries
+        self.keys = entries
         for entry in entries:
             self.addChildren(entry)
 
@@ -182,4 +182,7 @@ class ImportFrom(AST):
 
 
 class Expr(AST):
+    pass
+
+class Tuple(AST):
     pass

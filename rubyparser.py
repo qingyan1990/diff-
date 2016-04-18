@@ -81,7 +81,7 @@ class Parser:
             elts = self.convertList(h.get("elts"))
             if elts is None:
                 elts = []
-            return Array(elts, start, end)
+            return List(elts, start, end)
 
         if t == "if":
             test = self.convert(h.get("test"))

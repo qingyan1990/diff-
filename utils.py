@@ -4,6 +4,10 @@
 import os
 from rubynode import *
 from parameters import *
+from diff import LANGUAGE
+
+
+print LANGUAGE
 
 
 # get list of fields from a node
