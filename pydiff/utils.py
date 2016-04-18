@@ -2,12 +2,9 @@
 #            tests and operations on AST nodes
 #-------------------------------------------------------------
 import os
-from rubynode import *
+from node import *
 from parameters import *
-from diff import LANGUAGE
 
-
-print LANGUAGE
 
 
 # get list of fields from a node
