@@ -2,9 +2,8 @@
 #            tests and operations on AST nodes
 #-------------------------------------------------------------
 import os
-from node import *
+from ast import *
 from parameters import *
-
 
 
 # get list of fields from a node

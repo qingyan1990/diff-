@@ -1,7 +1,6 @@
 from utils import *
 from htmlize import htmlize
 from json import loads
-import importlib
 from parser import Parser
 from subprocess import Popen, PIPE
 
@@ -184,9 +183,6 @@ def diff_node(node1, node2, depth=0, move=False):
 
     if isinstance(node1,Block) and isinstance(node2, Block):
         return diff_node(node1.stmts, node2.stmts, depth, move)
-
-    if isinstance(node1,Module) and isinstance(node2, Module):
-        return diff_node(node1.body, node2.body, depth, move)
 
     # same type of other AST nodes
     if (isinstance(node1, AST) and isinstance(node2, AST) and
