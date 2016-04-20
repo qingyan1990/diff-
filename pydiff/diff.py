@@ -490,6 +490,42 @@ def cleanup():
     allNodes1 = set()
     allNodes2 = set()
 
+def change_type(change):
+    origin = change.orig
+    current = change.cur
+    if origin is None and current is not None:
+        if isinstance(current, stmt):
+            if isinstance(current, Expr):
+                print type(current.value).__name__ + " statement insert"
+            else:
+                print type(current).__name__ + " statement insert"
+        if isinstance(current, expr):
+            print current.subtype + " insert"
+    if current is None and origin is not None:
+        if isinstance(origin, stmt):
+            if isinstance(origin, Expr):
+                print type(origin.value).__name__ + " statement delete"
+            else:
+                print type(origin).__name__ + " statement delete"
+        if isinstance(origin, expr):
+            print origin.subtype + " delete"
+    if current is not None and origin is not None and change.cost > 0 and \
+        not isinstance(current, stmt):
+        element = detail_change(current)
+        #print element
+        print CHANGETYPEDICT[element]
+
+def detail_change(node):
+    role = "UFO"
+    parent = None
+    while not isinstance(node, Module):
+        if isinstance(node, expr):
+            role = node.subtype
+            parent = node.parent
+            return role, type(parent).__name__
+        node = node.parent
+    return role, type(parent).__name__
+
 def main():
     if len(sys.argv) == 3:
         file1 = sys.argv[1]
@@ -497,10 +533,11 @@ def main():
         content1 = open(file1).read()
         content2 = open(file2).read()
         changes = diff(file1, file2, parent=True)
-        #for change in changes:
+        for change in changes:
+            change_type(change)
             #if change.cost != 0:
                 #print change
-        generate_html('tmp.html', Texts(content1, content2, changes))
+        #generate_html('tmp.html', Texts(content1, content2, changes))
 
 
 if __name__ == '__main__':

@@ -1,11 +1,9 @@
 #-------------------------------------------------------------
 # global parameters
 #-------------------------------------------------------------
+from ast import *
 
 DEBUG = False
-# sys.setrecursionlimit(10000)
-
-#LANGUAGE = "Python"
 MOVE_RATIO     = 0.2
 MOVE_SIZE      = 10
 MOVE_ROUND     = 5
@@ -16,3 +14,15 @@ FRAME_SIZE     = 20
 allNodes1 = set()
 allNodes2 = set()
 
+
+CHANGETYPEDICT = {
+                  ('UFO', None): "",
+                  ('test', 'If'): "If condition change",
+                  ('test', 'While'): "While condition change",
+                  ('name_node', 'FunctionDef'): "Function rename",
+                  ('name_node', 'ClassDef'): "Class rename",
+                  ('args', 'arguments'): "Argument rename",
+                  ('value', 'Yield'): "Yield value change",
+                  ('value', 'Return'): "Return value change",
+                  ('decorator_list', 'FunctionDef'): "Decorator rename",
+                  ('values', 'Print'): 'Print value change'}
