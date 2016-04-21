@@ -22,7 +22,8 @@
 
 .m {                            /* moved */
     border: solid 1px #A9A9A9;
-    border-radius: 3px;
+    background-color: LightPink;
+    border-radius: 4px;
     cursor: crosshair;
 }
 

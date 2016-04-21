@@ -185,6 +185,8 @@ def change_class(change):
         return 'i'
     elif (change.cost > 0):
         return 'c'
+    elif change.is_move:
+        return 'm'
     else:
         return 'u'
 
