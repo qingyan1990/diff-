@@ -514,19 +514,20 @@ ops_map = {
 
 def add_parent(node,children):
     for item in children:
-        child = getattr(node,item)
-        if is_atom(child):
-            continue
-        if child:
-            if isinstance(child,list):
-                for n in child:
-                    n.parent = node
-                    n.subtype = item
-                    add_parent_node(n)
-            else:
-                child.parent = node
-                child.subtype = item
-                add_parent_node(child)
+        if hasattr(node, item):
+            child = getattr(node,item)
+            if is_atom(child):
+                continue
+            if child:
+                if isinstance(child,list):
+                    for n in child:
+                        n.parent = node
+                        n.subtype = item
+                        add_parent_node(n)
+                else:
+                    child.parent = node
+                    child.subtype = item
+                    add_parent_node(child)
 
 
 def add_parent_node(node):

@@ -121,20 +121,6 @@ def dist1(s1, s2):
 
 def diff_node(node1, node2, depth=0, move=False):
 
-    # try substructural diff
-    def trysub(cc):
-        (changes, cost) = cc
-        if not move:
-            return (changes, cost)
-        elif can_move(node1, node2, cost):
-            return (changes, cost)
-        else:
-            mc1 = diff_subnode(node1, node2, depth, move)
-            if mc1 is not None:
-                return mc1
-            else:
-                return (changes, cost)
-
     #pdb.set_trace()
     if isinstance(node1, list) and not isinstance(node2, list):
         node2 = [node2]
@@ -199,8 +185,8 @@ def diff_node(node1, node2, depth=0, move=False):
         return ([mod_node(node1, node2, 0)], 0)
 
     # all unmatched types and unequal values
-    return trysub(([del_node(node1), ins_node(node2)],
-                   node_size(node1) + node_size(node2)))
+    return ([del_node(node1), ins_node(node2)],
+                   node_size(node1) + node_size(node2))
 
 
 
@@ -218,15 +204,7 @@ def diff_list(table, ls1, ls2, depth, move):
         (m0, c0) = diff_node(ls1[0], ls2[0], depth, move)
         (m1, c1) = diff_list(table, ls1[1:], ls2[1:], depth, move)
         cost1 = c1 + c0
-
-        if ((is_frame(ls1[0]) and
-             is_frame(ls2[0]) and
-             not node_framed(ls1[0], m0) and
-             not node_framed(ls2[0], m0))):
-            frame_change = [mod_node(ls1[0], ls2[0], c0)]
-        else:
-            frame_change = []
-
+        frame_change = []
         # short cut 1 (func and classes with same names)
         if can_move(ls1[0], ls2[0], c0):
             return (frame_change + m0 + m1, cost1)
@@ -512,8 +490,11 @@ def change_type(change):
     if current is not None and origin is not None and change.cost > 0 and \
         not isinstance(current, stmt):
         element = detail_change(current)
-        #print element
-        print CHANGETYPEDICT[element]
+        print element
+        if element in CHANGETYPEDICT:
+            print CHANGETYPEDICT[element]
+        else:
+            print element[0] + " in " + element[1] + " change"
 
 def detail_change(node):
     role = "UFO"
@@ -532,12 +513,12 @@ def main():
         file2 = sys.argv[2]
         content1 = open(file1).read()
         content2 = open(file2).read()
-        changes = diff(file1, file2, parent=True)
-        for change in changes:
-            change_type(change)
+        changes = diff(file1, file2, parent=True, move=True)
+        #for change in changes:
+            #change_type(change)
             #if change.cost != 0:
                 #print change
-        #generate_html('tmp.html', Texts(content1, content2, changes))
+        generate_html('tmp.html', Texts(content1, content2, changes))
 
 
 if __name__ == '__main__':
