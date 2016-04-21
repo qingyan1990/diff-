@@ -96,14 +96,6 @@ def can_move(node1, node2, cost):
             cost <= (node_size(node1) + node_size(node2)) * MOVE_RATIO)
 
 
-# whether the node is considered deleted or inserted because
-# the other party matches a substructure of it.
-def node_framed(node, changes):
-    for c in changes:
-        if (c.is_frame and (node == c.orig or node == c.cur)):
-            return True
-    return False
-
 
 
 # helper for turning nested if statements into sequences,
@@ -208,12 +200,6 @@ def debug(*args):
         print(args)
 
 
-def dot():
-    # sys.stdout.write('.')
-    # sys.stdout.flush()
-    pass
-
-
 def is_alpha(c):
     return (c == '_'
             or ('0' <= c <= '9')
@@ -243,31 +229,6 @@ def sz(s):
 
 def dp(s):
     return dump(parse(s))
-
-
-def run(name, closure=True, debug=False):
-    fullname1 = name + '1.py'
-    fullname2 = name + '2.py'
-
-    global DEBUG
-    olddebug = DEBUG
-    DEBUG = debug
-
-    diff(fullname1, fullname2, closure)
-
-    DEBUG = olddebug
-
-
-def demo():
-    run('demo')
-
-
-def go():
-    run('heavy')
-
-
-def pf():
-    cProfile.run("run('heavy')", sort="cumulative")
 
 
 # ------------------------ file system support -----------------------
