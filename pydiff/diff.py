@@ -255,16 +255,17 @@ def find_move(changes):
         for d0 in deletions:
             for a0 in insertions:
                 node1, node2 = d0.orig, a0.cur
-                changes, cost = diff_node(node1, node2, 0)
-                if cost == 0:
-                    matched.append(d0)
-                    matched.append(a0)
-                    deletions.remove(d0)
-                    insertions.remove(a0)
-                    for change in changes:
-                        change.is_move = True
-                    new_changes.extend(changes)
-                    break;
+                if type(node1) == type(node2):
+                    changes, cost = diff_node(node1, node2, 0)
+                    if cost == 0:
+                        matched.append(d0)
+                        matched.append(a0)
+                        deletions.remove(d0)
+                        insertions.remove(a0)
+                        for change in changes:
+                            change.is_move = True
+                        new_changes.extend(changes)
+                        break;
     return matched, new_changes
 
 
