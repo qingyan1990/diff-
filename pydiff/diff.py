@@ -262,9 +262,10 @@ def find_move(changes):
                         matched.append(a0)
                         deletions.remove(d0)
                         insertions.remove(a0)
-                        for change in changes:
-                            change.is_move = True
-                        new_changes.extend(changes)
+                        change = Change(node1,node2,cost,is_move=True)
+                        #for change in changes:
+                            #change.is_move = True
+                        new_changes.append(change)
                         break;
     return matched, new_changes
 
