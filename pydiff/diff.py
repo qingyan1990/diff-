@@ -335,6 +335,8 @@ def generate_html(filename, changes, has_lineno=False):
 def change_type(change):
     origin = change.orig
     current = change.cur
+    if change.is_move:
+        print type(change.orig).__name__ + " move"
     if origin is None and current is not None:
         if isinstance(current, stmt):
             if isinstance(current, Expr):
@@ -378,8 +380,8 @@ def main():
         content1 = open(file1).read()
         content2 = open(file2).read()
         changes = diff(file1, file2, parent=True, move=True)
-        #for change in changes:
-            #change_type(change)
+        for change in changes:
+            change_type(change)
             #if change.cost != 0:
                 #print change
         generate_html('tmp.html', Texts(content1, content2, changes))
