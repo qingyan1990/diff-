@@ -1,6 +1,7 @@
 from utils import *
 import sys
 from improve_ast import *
+from htmlize import htmlize
 
 class Texts:
     def __init__(self, origin_text, current_text, changes):
@@ -11,7 +12,7 @@ class Texts:
 
 # The difference between nodes are stored as a Change structure.
 class Change:
-    def __init__(self, orig, cur, cost, is_move=False):
+    def __init__(self, orig, cur, cost, change_type="", is_move=False):
         self.orig = orig
         self.cur = cur
         if orig is None:
@@ -22,6 +23,7 @@ class Change:
             self.cost = node_size(orig) + node_size(cur)
         else:
             self.cost = cost
+        self.change_type = change_type
         self.is_move = is_move
     def __repr__(self):
         move = "M" if self.is_move else "-"
@@ -29,7 +31,7 @@ class Change:
             return [] if x==None else x
         return ("(" + str(hole(self.orig)) + ":" + str(hole(self.cur))
                 + ":" + str(self.cost) + ":" + str(self.similarity())
-                + ":" + move + ")")
+                + ":" + move + ":" + change_type + ")")
     def similarity(self):
         total = node_size(self.orig) + node_size(self.cur)
         return 1 - div(self.cost, total)
@@ -87,8 +89,6 @@ def str_dist(s1, s2):
     return ret
 
 
-# the main dynamic programming part
-# similar to the structure of diff_list
 def dist1(s1, s2):
     if s1 == s2:
         return 1.0
@@ -110,7 +110,7 @@ def dist1(s1, s2):
 #                        diff of nodes
 #-------------------------------------------------------------
 
-def diff_node(node1, node2, depth=0, move=False):
+def diff_node(node1, node2, move=False):
 
     #pdb.set_trace()
     if isinstance(node1, list) and not isinstance(node2, list):
@@ -121,7 +121,7 @@ def diff_node(node1, node2, depth=0, move=False):
 
     if isinstance(node1, list) and isinstance(node2, list):
         table = create_table(len(node1), len(node2))
-        (changes,cost) = diff_list(table, node1, node2, 0, move)
+        (changes,cost) = diff_list(table, node1, node2, move)
         if move:
             matched, new_changes = find_move(changes)
             if matched:
@@ -161,7 +161,7 @@ def diff_node(node1, node2, depth=0, move=False):
         # else fall through for things like f(x).y vs x.y
 
     if isinstance(node1,Module) and isinstance(node2, Module):
-        return diff_node(node1.body, node2.body, depth, move)
+        return diff_node(node1.body, node2.body, move)
 
     # same type of other AST nodes
     if (isinstance(node1, AST) and isinstance(node2, AST) and
@@ -172,7 +172,7 @@ def diff_node(node1, node2, depth=0, move=False):
         min_len = min(len(fs1), len(fs2))
 
         for i in range(min_len):
-            (m, c) = diff_node(fs1[i], fs2[i], depth, move)
+            (m, c) = diff_node(fs1[i], fs2[i], move)
             changes = m + changes
             cost += c
 
@@ -192,23 +192,23 @@ def diff_node(node1, node2, depth=0, move=False):
 
 # diff_list is the main part of dynamic programming
 
-def diff_list(table, ls1, ls2, depth, move):
+def diff_list(table, ls1, ls2, move):
 
     def memo(v):
         table_put(table, len(ls1), len(ls2), v)
         return v
 
     def guess(table, ls1, ls2):
-        (m0, c0) = diff_node(ls1[0], ls2[0], depth, move)
-        (m1, c1) = diff_list(table, ls1[1:], ls2[1:], depth, move)
+        (m0, c0) = diff_node(ls1[0], ls2[0], move)
+        (m1, c1) = diff_list(table, ls1[1:], ls2[1:], move)
         cost1 = c1 + c0
         # short cut 1 (func and classes with same names)
         if can_move(ls1[0], ls2[0], c0):
             return (m0 + m1, cost1)
 
         else:  # do more work
-            (m2, c2) = diff_list(table, ls1[1:], ls2, depth, move)
-            (m3, c3) = diff_list(table, ls1, ls2[1:], depth, move)
+            (m2, c2) = diff_list(table, ls1[1:], ls2, move)
+            (m3, c3) = diff_list(table, ls1, ls2[1:], move)
             cost2 = c2 + node_size(ls1[0])
             cost3 = c3 + node_size(ls2[0])
 
@@ -255,7 +255,7 @@ def find_move(changes):
             for a0 in insertions:
                 node1, node2 = d0.orig, a0.cur
                 if type(node1) == type(node2):
-                    changes, cost = diff_node(node1, node2, 0)
+                    changes, cost = diff_node(node1, node2)
                     if cost == 0:
                         matched.append(d0)
                         matched.append(a0)
@@ -301,7 +301,7 @@ def diff(file1, file2, move=False, parent=False):
     improve_ast(node2, lines2, file2, 'right', parent)
 
     # get the changes
-    (changes, cost) = diff_node(node1, node2, 0, move)
+    (changes, cost) = diff_node(node1, node2, move)
     return changes
 
 
@@ -324,42 +324,46 @@ def diffstring(str1, str2, move=False, parent=False):
     improve_ast(node2, str2, None, 'right', parent)
 
     # get the changes
-    (changes, cost) = diff_node(node1, node2, 0, move)
+    (changes, cost) = diff_node(node1, node2, move)
     return changes, cost
 
 
-def change_type(change):
-    origin = change.orig
-    current = change.cur
+def find_change_type(changes):
+    if not isinstance(changes,list):
+        changes = [changes]
+    for change in changes:
+        origin = change.orig
+        current = change.cur
 
-    if change.is_move:
-        return type(change.orig).__name__ + " move"
-    if change.cost == 0.0:
-        return ""
-    if origin is None and current is not None:
-        if isinstance(current, stmt):
-            if isinstance(current, Expr):
-                return type(current.value).__name__ + " statement insert"
+        if change.is_move:
+            change.change_type = type(change.orig).__name__ + " move"
+        elif change.cost == 0.0:
+            change.change_type = ""
+        elif origin is None and current is not None:
+            if isinstance(current, stmt):
+                if isinstance(current, Expr):
+                    change.change_type = type(current.value).__name__ + " statement insert"
+                else:
+                    change.change_type = type(current).__name__ + " statement insert"
+            if isinstance(current, expr):
+                change.change_type = current.subtype + " insert"
+        elif current is None and origin is not None:
+            if isinstance(origin, stmt):
+                if isinstance(origin, Expr):
+                    change.change_type = type(origin.value).__name__ + " statement delete"
+                else:
+                    change.change_type = type(origin).__name__ + " statement delete"
+            if isinstance(origin, expr):
+                change.change_type = origin.subtype + " delete"
+        elif current is not None and origin is not None and change.cost > 0 and \
+            not isinstance(current, stmt):
+            element = detail_change(current)
+            if element in CHANGETYPEDICT:
+                change.change_type = CHANGETYPEDICT[element]
             else:
-                return type(current).__name__ + " statement insert"
-        if isinstance(current, expr):
-            return current.subtype + " insert"
-    if current is None and origin is not None:
-        if isinstance(origin, stmt):
-            if isinstance(origin, Expr):
-                return type(origin.value).__name__ + " statement delete"
-            else:
-                return type(origin).__name__ + " statement delete"
-        if isinstance(origin, expr):
-            return origin.subtype + " delete"
-    if current is not None and origin is not None and change.cost > 0 and \
-        not isinstance(current, stmt):
-        element = detail_change(current)
-        if element in CHANGETYPEDICT:
-            return CHANGETYPEDICT[element]
+                change.change_type = element[0] + " in " + element[1] + " change"
         else:
-            return element[0] + " in " + element[1] + " change"
-    return ""
+            change.change_type = ""
 
 def detail_change(node):
     role = "UFO"
@@ -372,20 +376,16 @@ def detail_change(node):
         node = node.parent
     return role, type(parent).__name__
 
-#def main():
-    #if len(sys.argv) == 3:
-        #file1 = sys.argv[1]
-        #file2 = sys.argv[2]
-        #content1 = open(file1).read()
-        #content2 = open(file2).read()
-        #changes = diff(file1, file2, parent=True, move=True)
-        #for change in changes:
-            #print change
-            #change_type(change)
-            #if change.cost != 0:
-                #print change
-        # ('tmp.html', Texts(content1, content2, changes))
+def main():
+    if len(sys.argv) == 3:
+        file1 = sys.argv[1]
+        file2 = sys.argv[2]
+        content1 = open(file1).read()
+        content2 = open(file2).read()
+        changes = diff(file1, file2, parent=True, move=True)
+        find_change_type(changes)
+        htmlize('tmp.html',Texts(content1, content2, changes))
 
 
-#if __name__ == '__main__':
-    #main()
+if __name__ == '__main__':
+    main()
