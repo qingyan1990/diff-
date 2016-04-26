@@ -1,5 +1,4 @@
 from utils import *
-from htmlize import htmlize
 import sys
 from improve_ast import *
 
@@ -28,7 +27,7 @@ class Change:
         move = "M" if self.is_move else "-"
         def hole(x):
             return [] if x==None else x
-        return ("(C:" + str(hole(self.orig)) + ":" + str(hole(self.cur))
+        return ("(" + str(hole(self.orig)) + ":" + str(hole(self.cur))
                 + ":" + str(self.cost) + ":" + str(self.similarity())
                 + ":" + move + ")")
     def similarity(self):
@@ -328,39 +327,39 @@ def diffstring(str1, str2, move=False, parent=False):
     (changes, cost) = diff_node(node1, node2, 0, move)
     return changes, cost
 
-def generate_html(filename, changes, has_lineno=False):
-    htmlize(filename, changes, has_lineno)
-
 
 def change_type(change):
     origin = change.orig
     current = change.cur
+
     if change.is_move:
-        print type(change.orig).__name__ + " move"
+        return type(change.orig).__name__ + " move"
+    if change.cost == 0.0:
+        return ""
     if origin is None and current is not None:
         if isinstance(current, stmt):
             if isinstance(current, Expr):
-                print type(current.value).__name__ + " statement insert"
+                return type(current.value).__name__ + " statement insert"
             else:
-                print type(current).__name__ + " statement insert"
+                return type(current).__name__ + " statement insert"
         if isinstance(current, expr):
-            print current.subtype + " insert"
+            return current.subtype + " insert"
     if current is None and origin is not None:
         if isinstance(origin, stmt):
             if isinstance(origin, Expr):
-                print type(origin.value).__name__ + " statement delete"
+                return type(origin.value).__name__ + " statement delete"
             else:
-                print type(origin).__name__ + " statement delete"
+                return type(origin).__name__ + " statement delete"
         if isinstance(origin, expr):
-            print origin.subtype + " delete"
+            return origin.subtype + " delete"
     if current is not None and origin is not None and change.cost > 0 and \
         not isinstance(current, stmt):
         element = detail_change(current)
-        print element
         if element in CHANGETYPEDICT:
-            print CHANGETYPEDICT[element]
+            return CHANGETYPEDICT[element]
         else:
-            print element[0] + " in " + element[1] + " change"
+            return element[0] + " in " + element[1] + " change"
+    return ""
 
 def detail_change(node):
     role = "UFO"
@@ -373,19 +372,20 @@ def detail_change(node):
         node = node.parent
     return role, type(parent).__name__
 
-def main():
-    if len(sys.argv) == 3:
-        file1 = sys.argv[1]
-        file2 = sys.argv[2]
-        content1 = open(file1).read()
-        content2 = open(file2).read()
-        changes = diff(file1, file2, parent=True, move=True)
-        for change in changes:
-            change_type(change)
+#def main():
+    #if len(sys.argv) == 3:
+        #file1 = sys.argv[1]
+        #file2 = sys.argv[2]
+        #content1 = open(file1).read()
+        #content2 = open(file2).read()
+        #changes = diff(file1, file2, parent=True, move=True)
+        #for change in changes:
+            #print change
+            #change_type(change)
             #if change.cost != 0:
                 #print change
-        generate_html('tmp.html', Texts(content1, content2, changes))
+        # ('tmp.html', Texts(content1, content2, changes))
 
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+    #main()

@@ -6,6 +6,7 @@ import os
 import pdb
 from parameters import *
 from utils import *
+from diff import change_type
 
 
 #-------------------- types and utilities ----------------------
@@ -192,7 +193,7 @@ def change_class(change):
 
 
 def span_start(change):
-    return '<span class=' + qs(change_class(change)) + 'title=debug' + '>'
+    return '<span class=' + qs(change_class(change)) + ' title=' + qs(change_type(change)) + '>'
 
 
 def link_start(change, side):
@@ -206,7 +207,7 @@ def link_start(change, side):
     return ('<a id=' + qs(uid(me)) +
             ' tid=' + qs(uid(other)) +
             ' class=' + qs(cls) +
-            '>')
+            ' title=' + qs(change_type(change)) +'>')
 
 
 def qs(s):
